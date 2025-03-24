@@ -1,0 +1,1 @@
+ C:\\Users\\seba9\\VSCode\ Projects\\Hack-AI-Thon-2025\\prova_flutter_app\\.dart_tool\\flutter_build\\65baec441a0c26c49a3e022e81a4ede3\\native_assets.json: 
