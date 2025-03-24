@@ -1,1 +1,0 @@
- C:\\Users\\seba9\\StudioProjects\\prova_flutter_app\\.dart_tool\\flutter_build\\3554a6dfb9b0f4962c4510e624c08226\\native_assets.json: 
