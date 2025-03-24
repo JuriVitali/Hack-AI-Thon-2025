@@ -1,2 +1,0 @@
-C:/Users/seba9/VSCode Projects/Hack-AI-Thon-2025/prova_flutter_app/android/app/.cxx/Debug/503b4j3c/x86/CMakeFiles/edit_cache.dir
-C:/Users/seba9/VSCode Projects/Hack-AI-Thon-2025/prova_flutter_app/android/app/.cxx/Debug/503b4j3c/x86/CMakeFiles/rebuild_cache.dir
