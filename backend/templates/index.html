@@ -26,9 +26,9 @@
             <tr>
                 <td>{{ file.id }}</td>
                 <td>{{ file.path.split('/')[-1] }}</td>
-                <td><button>
+                <td>
                     <button onclick="deleteFile({{ file.id }})">Delete</button>
-                </button></td>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
