@@ -12,10 +12,29 @@ services:
       POSTGRES_PASSWORD: ai
       POSTGRES_DB: ai
     ports:
-      - "5532:5432"
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./data/pdf:/app/pdf_files  # directory per i PDF
+
+  flask-app:
+      build:
+        context: .
+        dockerfile: ./backend/dockerfile.flask
+      volumes:
+        - ./backend:/flask_app
+      container_name: flask-app
+      restart: always
+      environment:
+        FLASK_APP: app.py
+        FLASK_ENV: development
+        FLASK_DEBUG: 1         # Enables debug mode
+        FLASK_SECRET_KEY: "123"
+        DATABASE_URL: postgresql://ai:ai@db:5432/ai
+      ports:
+        - "5000:5000"
+      depends_on:
+        - db
 
 volumes:
   postgres_data:
