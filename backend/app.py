@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from config import app, db, allowed_file
 from werkzeug.utils import secure_filename
 import os
+from models import KnowBase
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():

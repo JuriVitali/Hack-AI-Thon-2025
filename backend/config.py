@@ -1,6 +1,7 @@
 from flask import Flask, flash, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from flask_migrate import Migrate
 import os
 
 app = Flask(__name__)
@@ -18,8 +19,13 @@ def allowed_file(filename):  # ritorna vero se c'è il punto nel nome e se l'est
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER 
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///mydatabase.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://ai:ai@localhost:5532/ai"
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
+
+migrate = Migrate(app, db)
+
+
 

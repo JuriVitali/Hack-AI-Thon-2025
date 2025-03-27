@@ -1,8 +1,21 @@
+version: '3.8'
+
 services:
-  flask-backend:
-    build: ./backend
+  db:
+    build:
+      context: .
+      dockerfile: ./backend/db/dockerfile.postgres
+    container_name: vector-db
+    restart: always
+    environment:
+      POSTGRES_USER: ai
+      POSTGRES_PASSWORD: ai
+      POSTGRES_DB: ai
     ports:
-      - "5000:5000"
-    env_file:
-      - .env
-    restart: unless-stopped
+      - "5532:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./data/pdf:/app/pdf_files  # directory per i PDF
+
+volumes:
+  postgres_data:
