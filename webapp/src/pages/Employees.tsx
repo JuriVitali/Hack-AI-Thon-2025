@@ -1,120 +1,108 @@
-import { useState } from "react";
-import { Employee } from "../types/Employee";
-import EmployeeForm from "../components/EmployeeForm";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { employees as initialEmployees } from "../data/data";
 
 export default function Employees() {
-  const navigate = useNavigate();
+  const [employees, setEmployees] = useState(initialEmployees);
 
-  const [employees, setEmployees] = useState<Employee[]>([
-    {
-      id: 1,
-      name: "Mario",
-      surname: "Rossi",
-      email: "mario.rossi@example.com",
-      role: "Operaio",
-    },
-    {
-      id: 2,
-      name: "Luca",
-      surname: "Bianchi",
-      email: "luca.bianchi@example.com",
-      role: "Supervisore",
-    },
-  ]);
-
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
-    null
-  );
-  const [isFormOpen, setIsFormOpen] = useState(false);
-
-  const handleAdd = () => {
-    setSelectedEmployee(null);
-    setIsFormOpen(true);
-  };
-
-  const handleEdit = (employee: Employee) => {
-    setSelectedEmployee(employee);
-    setIsFormOpen(true);
-  };
-
-  const handleDelete = (id: number) => {
-    setEmployees(employees.filter((emp) => emp.id !== id));
-  };
-
-  const handleSave = (employee: Employee) => {
-    if (selectedEmployee) {
-      setEmployees(
-        employees.map((emp) => (emp.id === employee.id ? employee : emp))
-      );
-    } else {
-      setEmployees([...employees, employee]);
+  const addEmployee = () => {
+    const name = prompt("Inserisci il nome del dipendente:");
+    const surname = prompt("Inserisci il cognome del dipendente:");
+    const email = prompt("Inserisci l'email del dipendente:");
+    const role = prompt("Inserisci il ruolo del dipendente:");
+    if (name && surname && email && role) {
+      const newEmployee = {
+        id: Math.max(...employees.map((e) => e.id)) + 1,
+        name,
+        surname,
+        email,
+        role,
+        attendingCourse: undefined,
+      };
+      setEmployees([...employees, newEmployee]);
     }
-    setIsFormOpen(false);
+  };
+
+  const editEmployee = (id: number) => {
+    const employee = employees.find((e) => e.id === id);
+    if (!employee) return;
+
+    const name = prompt("Modifica il nome:", employee.name);
+    const surname = prompt("Modifica il cognome:", employee.surname);
+    const email = prompt("Modifica l'email:", employee.email);
+    const role = prompt("Modifica il ruolo:", employee.role);
+
+    if (name && surname && email && role) {
+      setEmployees(
+        employees.map((e) =>
+          e.id === id ? { ...e, name, surname, email, role } : e
+        )
+      );
+    }
+  };
+
+  const deleteEmployee = (id: number) => {
+    if (confirm("Sei sicuro di voler eliminare questo dipendente?")) {
+      setEmployees(employees.filter((e) => e.id !== id));
+    }
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Gestione Dipendenti</h1>
-
-      <button
-        onClick={handleAdd}
-        className="mb-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-      >
-        + Aggiungi Dipendente
-      </button>
-
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-300 rounded">
-          <thead>
-            <tr className="bg-gray-100 text-left">
-              <th className="p-2 border">Nome</th>
-              <th className="p-2 border">Cognome</th>
-              <th className="p-2 border">Email</th>
-              <th className="p-2 border">Ruolo</th>
-              <th className="p-2 border">Azioni</th>
-            </tr>
-          </thead>
-          <tbody>
-            {employees.map((emp) => (
-              <tr key={emp.id} className="hover:bg-gray-50">
-                <td className="p-2 border">{emp.name}</td>
-                <td className="p-2 border">{emp.surname}</td>
-                <td className="p-2 border">{emp.email}</td>
-                <td className="p-2 border">{emp.role}</td>
-                <td className="p-2 border space-x-2">
-                  <button
-                    onClick={() => handleEdit(emp)}
-                    className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                  >
-                    Modifica
-                  </button>
-                  <button
-                    onClick={() => handleDelete(emp.id)}
-                    className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                  >
-                    Elimina
-                  </button>
-                  <button
-                    onClick={() => navigate(`/employees/${emp.id}`)}
-                    className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
-                  >
-                    Dettagli
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="p-6 bg-gray-50 min-h-screen">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-gray-800">Dipendenti</h1>
+        <button
+          onClick={addEmployee}
+          className="px-4 py-2 bg-[#2fb667] text-white rounded-lg hover:bg-[#2aa05b] transition"
+        >
+          Aggiungi Dipendente
+        </button>
       </div>
-
-      {isFormOpen && (
-        <EmployeeForm
-          employee={selectedEmployee ?? undefined}
-          onSave={handleSave}
-          onCancel={() => setIsFormOpen(false)}
-        />
-      )}
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        {employees.map((employee) => (
+          <div
+            key={employee.id}
+            className="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition-shadow flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center mb-4">
+                <div className="w-14 h-14 rounded-full bg-[#323554] flex items-center justify-center text-xl font-bold text-[#FF7F11]">
+                  {employee.name[0]}
+                  {employee.surname[0]}
+                </div>
+                <div className="ml-4">
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    {employee.name} {employee.surname}
+                  </h3>
+                  <p className="text-sm text-gray-500">{employee.role}</p>
+                </div>
+              </div>
+              <p className="text-sm text-gray-600 mb-2">
+                <strong>Email:</strong> {employee.email}
+              </p>
+              {employee.attendingCourse && (
+                <p className="text-sm text-[#3e4268]">
+                  Attualmente segue il corso:{" "}
+                  <strong>{employee.attendingCourse}</strong>
+                </p>
+              )}
+            </div>
+            <div className="mt-4 flex justify-between">
+              <button
+                onClick={() => editEmployee(employee.id)}
+                className="px-3 py-1 bg-[#50a4a7] text-white rounded hover:bg-[#478385] transition"
+              >
+                Modifica
+              </button>
+              <button
+                onClick={() => deleteEmployee(employee.id)}
+                className="px-3 py-1 bg-[#c73131] text-white rounded hover:bg-[#b92d2d] transition"
+              >
+                Elimina
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

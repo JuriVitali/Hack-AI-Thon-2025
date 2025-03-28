@@ -1,103 +1,101 @@
-import { useMemo, useState } from "react";
+import React, { useMemo, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import Select from "react-select";
-import { Certification, EmployeeCertification } from "../types/Certification";
-
-const availableCertifications = [
-  { value: "Antincendio", label: "Antincendio" },
-  { value: "Primo Soccorso", label: "Primo Soccorso" },
-  { value: "PES/PAV", label: "PES/PAV" },
-  { value: "Lavori in quota", label: "Lavori in quota" },
-  { value: "Uso DPI", label: "Uso DPI" },
-];
+import type { SelectInstance } from "react-select";
+import {
+  certifications as gridCertifications,
+  availableCertificationsForDropdown,
+  employees,
+} from "../data/data"; // Importa i dati separati
+import { Certification } from "../types/Certification";
 
 export default function Certifications() {
   const navigate = useNavigate();
-  const [filterExpiring, setFilterExpiring] = useState(false);
-  const [certifications, setCertifications] = useState<Certification[]>([
-    {
-      id: 1,
-      name: "Antincendio",
-      description: "Basso rischio",
-      requiredStaff: 3,
-    },
-    {
-      id: 2,
-      name: "Primo Soccorso",
-      description: "Livello base",
-      requiredStaff: 2,
-    },
-    { id: 3, name: "PES/PAV", description: "Elettrico", requiredStaff: 1 },
-  ]);
-
-  const [employeeCerts] = useState<EmployeeCertification[]>([
-    {
-      employeeId: 1,
-      certificationId: 1,
-      issuedAt: "2023-01-01",
-      expiresAt: "2025-01-01",
-    },
-    {
-      employeeId: 2,
-      certificationId: 1,
-      issuedAt: "2022-05-10",
-      expiresAt: "2023-11-01",
-    },
-    {
-      employeeId: 3,
-      certificationId: 2,
-      issuedAt: "2023-03-15",
-      expiresAt: "2024-12-31",
-    },
-  ]);
-
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [newRequired, setNewRequired] = useState<number>(0);
+  const [filterType, setFilterType] = useState<string>("all");
+  const [certifications, setCertifications] =
+    useState<Certification[]>(gridCertifications);
   const [newCertification, setNewCertification] = useState<{
     value: string;
     label: string;
   } | null>(null);
-
+  const [showSearch, setShowSearch] = useState(false);
+  const searchInputRef = useRef<SelectInstance<any, false> | null>(null);
   const now = dayjs();
   const soon = now.add(30, "day");
 
+  const customStyles = {
+    control: (provided: any) => ({
+      ...provided,
+      backgroundColor: "#323554",
+      color: "white",
+    }),
+    menu: (provided: any) => ({
+      ...provided,
+      backgroundColor: "#323554",
+      color: "white",
+    }),
+    singleValue: (provided: any) => ({
+      ...provided,
+      color: "white",
+    }),
+    placeholder: (provided: any) => ({
+      ...provided,
+      color: "white",
+    }),
+    input: (provided: any) => ({
+      ...provided,
+      color: "white",
+    }),
+    option: (provided: any, state: any) => ({
+      ...provided,
+      backgroundColor: state.isFocused ? "#424566" : "#323554",
+      color: "white",
+    }),
+  };
+
   const activeCounts = useMemo(() => {
     const map: Record<number, number> = {};
-    employeeCerts.forEach((ec) => {
-      if (dayjs(ec.expiresAt).isAfter(now)) {
-        map[ec.certificationId] = (map[ec.certificationId] || 0) + 1;
-      }
+    employees.forEach((employee) => {
+      employee.certifications?.forEach((cert) => {
+        if (dayjs(cert.expiresAt).isAfter(now)) {
+          map[cert.certificationId] = (map[cert.certificationId] || 0) + 1;
+        }
+      });
     });
     return map;
-  }, [employeeCerts, now]);
+  }, [now]);
 
-  const expiringSoon = useMemo(() => {
-    return certifications
-      .filter((cert) => {
-        return employeeCerts.some(
-          (ec) =>
-            ec.certificationId === cert.id && dayjs(ec.expiresAt).isBefore(soon)
-        );
-      })
-      .map((c) => c.id);
-  }, [certifications, employeeCerts, soon]);
+  const filteredCerts = useMemo(() => {
+    if (filterType === "expiring") {
+      return certifications.filter((cert) =>
+        employees.some((employee) =>
+          employee.certifications?.some(
+            (c) =>
+              c.certificationId === cert.id &&
+              dayjs(c.expiresAt).isAfter(now) &&
+              dayjs(c.expiresAt).isBefore(soon)
+          )
+        )
+      );
+    } else if (filterType === "insufficient") {
+      return certifications.filter((cert) => {
+        const certified = activeCounts[cert.id] || 0;
+        return certified < (cert.requiredStaff ?? 0);
+      });
+    }
+    return certifications;
+  }, [filterType, certifications, activeCounts, now, soon]);
 
-  const startEditing = (cert: Certification) => {
-    setEditingId(cert.id);
-    setNewRequired(cert.requiredStaff ?? 0);
-  };
-
-  const saveNewRequired = (id: number) => {
-    setCertifications((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, requiredStaff: newRequired } : c))
-    );
-    setEditingId(null);
-  };
-
-  const deleteCertification = (id: number) => {
-    setCertifications((prev) => prev.filter((c) => c.id !== id));
-  };
+  const availableOptions = useMemo(() => {
+    const existingNames = certifications.map((cert) => cert.name);
+    return availableCertificationsForDropdown
+      .filter((cert) => !existingNames.includes(cert.name))
+      .map((cert) => ({
+        value: cert.name,
+        label: cert.name,
+      }));
+  }, [certifications]);
 
   const addNewCertification = () => {
     if (
@@ -115,125 +113,118 @@ export default function Certifications() {
         },
       ]);
       setNewCertification(null);
+      setShowSearch(false);
     }
   };
 
-  const filteredCerts = filterExpiring
-    ? certifications.filter((cert) => expiringSoon.includes(cert.id))
-    : certifications;
+  const toggleSearch = () => {
+    setShowSearch((prev) => {
+      if (!prev) {
+        setTimeout(() => searchInputRef.current?.focus(), 300); // Focus dopo l'animazione
+      }
+      return !prev;
+    });
+  };
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Gestione Certificazioni</h1>
-
-      <label className="mb-4 block">
-        <input
-          type="checkbox"
-          checked={filterExpiring}
-          onChange={() => setFilterExpiring((v) => !v)}
-          className="mr-2"
-        />
-        Mostra solo certificazioni in scadenza (entro 30 giorni)
-      </label>
-
-      <div className="mb-6 flex gap-4 items-end">
+      <div className="mb-6 flex flex-wrap justify-between items-end gap-4">
         <div className="w-64">
-          <label className="block text-sm font-medium mb-1">
-            Aggiungi nuova certificazione
+          <label className="block text-lg font-medium mb-1 text-black">
+            Filtra certificazioni
           </label>
-          <Select
-            options={availableCertifications}
-            value={newCertification}
-            onChange={(val: any) => setNewCertification(val)}
-            placeholder="Cerca certificazione..."
-            isClearable
-          />
+          <select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+            className="w-full px-3 py-2 bg-[#323554] text-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#424566] focus:border-white"
+          >
+            <option value="all">Tutte</option>
+            <option value="expiring">In scadenza</option>
+            <option value="insufficient">Copertura insufficiente</option>
+          </select>
         </div>
-        <button
-          onClick={addNewCertification}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        >
-          Aggiungi
-        </button>
+        <div className="flex items-end gap-4">
+          <div
+            className={`transition-transform duration-300 ${
+              showSearch ? "translate-x-0" : "translate-x-full"
+            }`}
+          >
+            {showSearch && (
+              <div className="w-64">
+                <Select
+                  ref={searchInputRef}
+                  options={availableOptions} // Usa le opzioni filtrate
+                  value={newCertification}
+                  onChange={(val: any) => setNewCertification(val)}
+                  placeholder="Cerca certificazione..."
+                  isClearable
+                  styles={customStyles} // Applica gli stili personalizzati
+                />
+              </div>
+            )}
+          </div>
+          {showSearch ? (
+            <button
+              onClick={addNewCertification}
+              className="px-4 py-2 bg-[#33b168] text-white rounded hover:bg-[#30a761]"
+            >
+              Conferma aggiunta
+            </button>
+          ) : (
+            <button
+              onClick={toggleSearch}
+              className="px-4 py-2 bg-[#33b168] text-white rounded hover:bg-[#30a761]"
+            >
+              Aggiungi certificazione
+            </button>
+          )}
+        </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-300 rounded">
-          <thead>
-            <tr className="bg-gray-100 text-left">
-              <th className="p-2 border">Certificazione</th>
-              <th className="p-2 border">Descrizione</th>
-              <th className="p-2 border">Fabbisogno</th>
-              <th className="p-2 border">Certificati Attivi</th>
-              <th className="p-2 border">Stato</th>
-              <th className="p-2 border">Azioni</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredCerts.map((cert) => {
-              const certified = activeCounts[cert.id] || 0;
-              const required = cert.requiredStaff ?? 0;
-              const isOk = certified >= required;
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+        {filteredCerts.map((cert) => {
+          const certified = activeCounts[cert.id] || 0; // Numero di certificati attivi
+          const required = cert.requiredStaff ?? 0; // Fabbisogno minimo
+          const isOk = certified >= required; // Verifica se il fabbisogno è soddisfatto
+          const progress =
+            required > 0 ? Math.min((certified / required) * 100, 100) : 0;
 
-              return (
-                <tr key={cert.id} className="hover:bg-gray-50">
-                  <td
-                    className="p-2 border font-medium text-blue-600 hover:underline cursor-pointer"
-                    onClick={() => navigate(`/certifications/${cert.id}`)}
-                  >
-                    {cert.name}
-                  </td>
-                  <td className="p-2 border text-sm text-gray-600">
-                    {cert.description || "-"}
-                  </td>
-                  <td className="p-2 border text-center">
-                    {editingId === cert.id ? (
-                      <input
-                        type="number"
-                        className="w-16 border p-1 text-center"
-                        value={newRequired}
-                        onChange={(e) => setNewRequired(Number(e.target.value))}
-                      />
-                    ) : (
-                      required
-                    )}
-                  </td>
-                  <td className="p-2 border text-center">{certified}</td>
-                  <td
-                    className={`p-2 border font-semibold text-center ${
-                      isOk ? "text-green-600" : "text-red-600"
+          return (
+            <div
+              key={cert.id}
+              className={`rounded-lg shadow-lg p-4 cursor-pointer transition border-l-4 ${
+                isOk ? "border-[#2fb667] bg-white" : "border-[#c73131] bg-white"
+              } hover:shadow-xl`} // Aumenta l'ombra con hover
+              onClick={() => navigate(`/certifications/${cert.id}`)}
+            >
+              <div className="w-14 h-14 rounded-full bg-[#323554] flex items-center justify-center text-xl font-bold text-[#FF7F11]">
+                {cert.name[0]}
+              </div>
+              <h2 className="text-lg font-semibold mb-1">{cert.name}</h2>
+              <p className="text-sm text-gray-600">{cert.description || "-"}</p>
+              <div className="mt-3">
+                <div className="h-2 w-full bg-gray-200 rounded">
+                  <div
+                    className={`h-2 rounded ${
+                      isOk ? "bg-[#2fb667]" : "bg-[#c73131]"
                     }`}
-                  >
-                    {isOk ? "OK" : "Insufficiente"}
-                  </td>
-                  <td className="p-2 border text-center space-x-2">
-                    {editingId === cert.id ? (
-                      <button
-                        onClick={() => saveNewRequired(cert.id)}
-                        className="text-blue-600 hover:underline"
-                      >
-                        Salva
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => startEditing(cert)}
-                        className="text-gray-600 hover:underline"
-                      >
-                        Modifica
-                      </button>
-                    )}
-                    <button
-                      onClick={() => deleteCertification(cert.id)}
-                      className="text-red-500 hover:underline"
-                    >
-                      Elimina
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                    style={{ width: `${progress}%` }}
+                  ></div>
+                </div>
+                <p className="text-sm mt-1 text-gray-700">
+                  {certified} su {required} dipendenti certificati
+                </p>
+              </div>
+              <p
+                className={`mt-2 font-medium ${
+                  isOk ? "text-[#2fb667]" : "text-[#c73131]"
+                }`}
+              >
+                {isOk ? "Copertura sufficiente" : "Copertura insufficiente"}
+              </p>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

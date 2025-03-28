@@ -2,8 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 
 const navItems = [
-  { label: "Dashboard", path: "/" },
-  { label: "Certificazioni", path: "/certifications" },
+  { label: "Certificazioni", path: "/" },
   { label: "Dipendenti", path: "/employees" },
   { label: "Presenze Corsi", path: "/courseattendance" },
 ];
@@ -11,11 +10,6 @@ const navItems = [
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
-
-  const user = {
-    name: "Giulia Bianchi",
-    avatarUrl: "https://i.pravatar.cc/100",
-  };
 
   return (
     <div className="flex min-h-screen bg-[#f3f4f7]">
@@ -26,15 +20,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 md:static`}
       >
+        {/* Navbar con logo e titolo */}
         <div className="flex items-center gap-3 p-4 border-b">
           <img
-            src={user.avatarUrl}
-            alt="Avatar"
-            className="w-10 h-10 rounded-full object-cover"
+            src="/logo.jpg"
+            alt="Quirrel Logo"
+            className="w-10 h-10 object-cover"
           />
-          <div>
-            <div className="text-sm text-white font-medium">{user.name}</div>
-          </div>
+          <span className="text-xl font-bold text-white">Squirrel</span>
         </div>
 
         <nav className="p-4 space-y-2">
@@ -44,7 +37,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               to={path}
               className={`block px-4 py-2 rounded-lg transition ${
                 location.pathname === path
-                  ? "bg-[#bf3afe] text-white"
+                  ? "bg-[#FF7F11] text-white"
                   : "text-white hover:bg-gray-200 hover:text-[#323554]"
               }`}
               onClick={() => setSidebarOpen(false)}
@@ -74,9 +67,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       )}
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col">
-        {/* Top bar */}
-        <header className="p-4 bg-white shadow-md flex items-center justify-between md:justify-end">
+      <div className="flex-1 flex flex-col md:ml-64">
+        <header className="p-4 bg-white shadow-md flex items-center justify-between h-16">
           <button
             className="md:hidden text-gray-600"
             onClick={() => setSidebarOpen(true)}
@@ -84,7 +76,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             ☰
           </button>
         </header>
-
         <main className="p-4">{children}</main>
       </div>
     </div>

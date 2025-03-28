@@ -1,24 +1,30 @@
 // src/routes.tsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
-import Dashboard from "./pages/Dashboard";
 import Certifications from "./pages/Certifications";
 import Employees from "./pages/Employees";
-import CertificationDetail from "./pages/CertificationDetail";
+import CertificationDetails from "./pages/CertificationDetails";
 import CourseAttendance from "./pages/CourseAttendance";
 import EmployeeDetail from "./pages/EmployeeDetail";
+import CertificationsPrediction from "./pages/CertificationsPrediction";
 
 export default function AppRoutes() {
   return (
     <Router>
       <Layout>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/certifications" element={<Certifications />} />
-          <Route path="/certifications/:id" element={<CertificationDetail />} />
+          <Route path="/" element={<Certifications />} />
+          <Route
+            path="/certifications/:id"
+            element={<CertificationDetails />}
+          />
           <Route path="/courseattendance" element={<CourseAttendance />} />
           <Route path="/employees" element={<Employees />} />
           <Route path="/employees/:id" element={<EmployeeDetail />} />
+          <Route
+            path="/certifications/prediction/:certificationId"
+            element={<CertificationsPrediction />}
+          />
         </Routes>
       </Layout>
     </Router>
