@@ -4,6 +4,7 @@ from config import app, db, allowed_file
 from werkzeug.utils import secure_filename
 import os
 from models import KnowBase
+from phi.agent import Agent
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
@@ -12,21 +13,62 @@ def upload_file():
         if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)
+        
         file = request.files['file']
-        # If the user does not select a file, the browser submits an
-        # empty file without a filename.
+        
+        # If the user does not select a file, the browser submits an empty file without a filename.
+        
         if file.filename == '':
             flash('No selected file')
             return redirect(request.url)
+        
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename) # never trust user input
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('upload_file', name=filename))
-    return render_template('index.html')
+            
+        
+            try: 
+                new_upload = KnowBase(path=os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                db.session.add(new_upload)
+                db.session.commit()
+
+                flash('File successfully uploaded and entry added to KnowBase')
+
+            except Exception as e:
+                db.session.rollback()
+                flash(f'Error uploading file: {e}')
+                return redirect(request.url)
+            
+        return redirect(url_for('upload_file', name=filename))
+    
+    
+
+    # Query all entries from the KnowBase table
+    files = KnowBase.query.all()
+    return render_template('index.html', files=files)
 
 @app.route('/uploads/<name>')
 def download_file(name):
     return send_from_directory(app.config["UPLOAD_FOLDER"], name)
+
+@app.route('/delete_file<id>', methods=['DELETE'])
+def delete_file(id):
+
+    KnowBase.query.filter(KnowBase.id == id).delete()
+
+    db.session.commit()
+    
+    files = KnowBase.query.all()
+    
+    return render_template('index.html', files=files)
+
+
+
+
+
+
+
+
 
 if __name__ == "__main__":
     with app.app_context():
