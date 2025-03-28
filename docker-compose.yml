@@ -15,7 +15,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./data/pdf:/app/pdf_files  # directory per i PDF
+      - ./backend/service/data/pdf:/app/pdf_files  # directory per i PDF
 
   flask-app:
       build:
