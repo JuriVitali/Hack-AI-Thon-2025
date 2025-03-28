@@ -11,7 +11,7 @@ from rich.pretty import pprint
 
 # Load .env
 load_dotenv('.env')
-print("Chiave GROQ:", os.getenv("GROQ_PI_KEY"))
+print("Chiave GROQ:", os.getenv("GROQ_API_KEY"))
 
 
 # MODELLO Pydantic (se ti serve per validare dopo)
@@ -79,7 +79,7 @@ def generate_quiz() -> List[dict]:
 
 def question_answer (text: str):
     agent2 = Agent(
-    model=Groq(id="deepseek-r1-distill-llama-70b"),
+    model=Groq(id="llama-3.3-70b-versatile"),
     description="This agent answer to question about work security certification.",
     instructions=[
         "Devi rispondere a domande riguardanti le certificazioni sulla sicurezza sul lavoro.",
