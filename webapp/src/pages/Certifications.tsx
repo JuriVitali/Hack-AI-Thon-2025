@@ -1,7 +1,16 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
+import Select from "react-select";
 import { Certification, EmployeeCertification } from "../types/Certification";
+
+const availableCertifications = [
+  { value: "Antincendio", label: "Antincendio" },
+  { value: "Primo Soccorso", label: "Primo Soccorso" },
+  { value: "PES/PAV", label: "PES/PAV" },
+  { value: "Lavori in quota", label: "Lavori in quota" },
+  { value: "Uso DPI", label: "Uso DPI" },
+];
 
 export default function Certifications() {
   const navigate = useNavigate();
@@ -45,6 +54,10 @@ export default function Certifications() {
 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [newRequired, setNewRequired] = useState<number>(0);
+  const [newCertification, setNewCertification] = useState<{
+    value: string;
+    label: string;
+  } | null>(null);
 
   const now = dayjs();
   const soon = now.add(30, "day");
@@ -82,6 +95,29 @@ export default function Certifications() {
     setEditingId(null);
   };
 
+  const deleteCertification = (id: number) => {
+    setCertifications((prev) => prev.filter((c) => c.id !== id));
+  };
+
+  const addNewCertification = () => {
+    if (
+      newCertification &&
+      !certifications.find((c) => c.name === newCertification.value)
+    ) {
+      const newId = Math.max(0, ...certifications.map((c) => c.id)) + 1;
+      setCertifications([
+        ...certifications,
+        {
+          id: newId,
+          name: newCertification.value,
+          description: "",
+          requiredStaff: 0,
+        },
+      ]);
+      setNewCertification(null);
+    }
+  };
+
   const filteredCerts = filterExpiring
     ? certifications.filter((cert) => expiringSoon.includes(cert.id))
     : certifications;
@@ -100,11 +136,33 @@ export default function Certifications() {
         Mostra solo certificazioni in scadenza (entro 30 giorni)
       </label>
 
+      <div className="mb-6 flex gap-4 items-end">
+        <div className="w-64">
+          <label className="block text-sm font-medium mb-1">
+            Aggiungi nuova certificazione
+          </label>
+          <Select
+            options={availableCertifications}
+            value={newCertification}
+            onChange={(val: any) => setNewCertification(val)}
+            placeholder="Cerca certificazione..."
+            isClearable
+          />
+        </div>
+        <button
+          onClick={addNewCertification}
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          Aggiungi
+        </button>
+      </div>
+
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-300 rounded">
           <thead>
             <tr className="bg-gray-100 text-left">
               <th className="p-2 border">Certificazione</th>
+              <th className="p-2 border">Descrizione</th>
               <th className="p-2 border">Fabbisogno</th>
               <th className="p-2 border">Certificati Attivi</th>
               <th className="p-2 border">Stato</th>
@@ -118,13 +176,15 @@ export default function Certifications() {
               const isOk = certified >= required;
 
               return (
-                <tr
-                  key={cert.id}
-                  className="hover:bg-gray-50 cursor-pointer"
-                  onClick={() => navigate(`/certifications/${cert.id}`)}
-                >
-                  <td className="p-2 border font-medium text-blue-600 hover:underline">
+                <tr key={cert.id} className="hover:bg-gray-50">
+                  <td
+                    className="p-2 border font-medium text-blue-600 hover:underline cursor-pointer"
+                    onClick={() => navigate(`/certifications/${cert.id}`)}
+                  >
                     {cert.name}
+                  </td>
+                  <td className="p-2 border text-sm text-gray-600">
+                    {cert.description || "-"}
                   </td>
                   <td className="p-2 border text-center">
                     {editingId === cert.id ? (
@@ -132,7 +192,6 @@ export default function Certifications() {
                         type="number"
                         className="w-16 border p-1 text-center"
                         value={newRequired}
-                        onClick={(e) => e.stopPropagation()}
                         onChange={(e) => setNewRequired(Number(e.target.value))}
                       />
                     ) : (
@@ -147,28 +206,28 @@ export default function Certifications() {
                   >
                     {isOk ? "OK" : "Insufficiente"}
                   </td>
-                  <td className="p-2 border text-center">
+                  <td className="p-2 border text-center space-x-2">
                     {editingId === cert.id ? (
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          saveNewRequired(cert.id);
-                        }}
+                        onClick={() => saveNewRequired(cert.id)}
                         className="text-blue-600 hover:underline"
                       >
                         Salva
                       </button>
                     ) : (
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          startEditing(cert);
-                        }}
+                        onClick={() => startEditing(cert)}
                         className="text-gray-600 hover:underline"
                       >
                         Modifica
                       </button>
                     )}
+                    <button
+                      onClick={() => deleteCertification(cert.id)}
+                      className="text-red-500 hover:underline"
+                    >
+                      Elimina
+                    </button>
                   </td>
                 </tr>
               );

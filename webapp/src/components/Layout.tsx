@@ -1,31 +1,42 @@
-// src/components/Layout.tsx
-import { ReactNode, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-
-interface LayoutProps {
-  children: ReactNode;
-}
+import { useState } from "react";
 
 const navItems = [
   { label: "Dashboard", path: "/" },
   { label: "Certificazioni", path: "/certifications" },
   { label: "Dipendenti", path: "/employees" },
+  { label: "Presenze Corsi", path: "/courseattendance" },
 ];
 
-export default function Layout({ children }: LayoutProps) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
+  const user = {
+    name: "Giulia Bianchi",
+    avatarUrl: "https://i.pravatar.cc/100",
+  };
+
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-[#f3f4f7]">
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 z-40 w-64 bg-white shadow-md transform transition-transform duration-200 ease-in-out 
+        className={`fixed inset-y-0 left-0 z-40 w-64 bg-[#323554] shadow-md transform transition-transform duration-200 ease-in-out 
         ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 md:static`}
       >
-        <div className="p-4 text-xl font-semibold border-b">Safety Manager</div>
+        <div className="flex items-center gap-3 p-4 border-b">
+          <img
+            src={user.avatarUrl}
+            alt="Avatar"
+            className="w-10 h-10 rounded-full object-cover"
+          />
+          <div>
+            <div className="text-sm text-white font-medium">{user.name}</div>
+          </div>
+        </div>
+
         <nav className="p-4 space-y-2">
           {navItems.map(({ label, path }) => (
             <Link
@@ -33,8 +44,8 @@ export default function Layout({ children }: LayoutProps) {
               to={path}
               className={`block px-4 py-2 rounded-lg transition ${
                 location.pathname === path
-                  ? "bg-blue-500 text-white"
-                  : "text-gray-700 hover:bg-gray-200"
+                  ? "bg-[#bf3afe] text-white"
+                  : "text-white hover:bg-gray-200 hover:text-[#323554]"
               }`}
               onClick={() => setSidebarOpen(false)}
             >
@@ -42,6 +53,16 @@ export default function Layout({ children }: LayoutProps) {
             </Link>
           ))}
         </nav>
+
+        <div className="absolute bottom-0 w-full p-4 border-t">
+          <Link
+            to="/settings"
+            className="block px-4 py-2 text-white hover:bg-gray-100 hover:text-[#323554] rounded"
+            onClick={() => setSidebarOpen(false)}
+          >
+            Impostazioni
+          </Link>
+        </div>
       </div>
 
       {/* Overlay on mobile */}

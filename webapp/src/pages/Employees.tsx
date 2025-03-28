@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { Employee } from "../types/Employee";
 import EmployeeForm from "../components/EmployeeForm";
+import { useNavigate } from "react-router-dom";
 
 export default function Employees() {
+  const navigate = useNavigate();
+
   const [employees, setEmployees] = useState<Employee[]>([
     {
       id: 1,
@@ -20,7 +23,9 @@ export default function Employees() {
     },
   ]);
 
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
+    null
+  );
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const handleAdd = () => {
@@ -90,6 +95,12 @@ export default function Employees() {
                   >
                     Elimina
                   </button>
+                  <button
+                    onClick={() => navigate(`/employees/${emp.id}`)}
+                    className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
+                  >
+                    Dettagli
+                  </button>
                 </td>
               </tr>
             ))}
@@ -107,4 +118,3 @@ export default function Employees() {
     </div>
   );
 }
-
