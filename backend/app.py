@@ -4,7 +4,9 @@ from config import app, db, allowed_file
 from werkzeug.utils import secure_filename
 import os
 from models import KnowBase
-from phi.agent import Agent
+import json
+from service.chatbot import generate_quiz, question_answer
+import requests
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
@@ -62,14 +64,17 @@ def delete_file(id):
     
     return render_template('index.html', files=files)
 
+@app.route('/quiz', methods=['GET'])
+def quiz():
+    quiz = generate_quiz()
+    return str(quiz)
 
-
-
-
-
-
-
-
+@app.route('/chitchat', methods=['POST'])
+def chitchat():
+    if request.method == 'POST':
+        text = request.form['text']
+        response = question_answer(text)
+        return str(response)
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
