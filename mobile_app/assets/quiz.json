@@ -1,0 +1,112 @@
+[
+    {
+        "id": 1,
+        "certificazione": "Abilitazione a carrelli elevatori - Normative di sicurezza",
+        "data_di_scadenza": "2023-12-31",
+        "quesiti": [
+            {
+                "domanda": "È obbligatorio controllare il carrello elevatore prima dell’uso?",
+                "risposta_corretta": true,
+                "risposta_utente": false
+            },
+            {
+                "domanda": "È consentito trasportare passeggeri sul carrello elevatore?",
+                "risposta_corretta": false,
+                "risposta_utente": true
+            },
+            {
+                "domanda": "Il mancato utilizzo della cintura di sicurezza può causare sanzioni?",
+                "risposta_corretta": true,
+                "risposta_utente": false
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "certificazione": "Abilitazione a carrelli elevatori - Manutenzione e controlli",
+        "data_di_scadenza": "2024-06-30",
+        "quesiti": [
+            {
+                "domanda": "Un controllo giornaliero del carrello elevatore è raccomandato per la sicurezza?",
+                "risposta_corretta": true,
+                "risposta_utente": null
+            },
+            {
+                "domanda": "Se noti una perdita di olio nel carrello elevatore, puoi continuare a usarlo senza problemi?",
+                "risposta_corretta": false,
+                "risposta_utente": null
+            },
+            {
+                "domanda": "Un segnale acustico malfunzionante deve essere immediatamente segnalato?",
+                "risposta_corretta": true,
+                "risposta_utente": null
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "certificazione": "Abilitazione a carrelli elevatori - Tecniche di guida",
+        "data_di_scadenza": "2025-03-29",
+        "quesiti": [
+            {
+                "domanda": "Devi sempre mantenere le forche abbassate quando guidi senza carico?",
+                "risposta_corretta": true,
+                "risposta_utente": false
+            },
+            {
+                "domanda": "È sicuro effettuare curve strette ad alta velocità con il carrello elevatore?",
+                "risposta_corretta": false,
+                "risposta_utente": true
+            },
+            {
+                "domanda": "Su un terreno in pendenza, il carico deve essere trasportato con le forche rivolte a monte?",
+                "risposta_corretta": true,
+                "risposta_utente": false
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "certificazione": "Abilitazione a carrelli elevatori - Movimentazione del carico",
+        "data_di_scadenza": "2025-03-30",
+        "quesiti": [
+            {
+                "domanda": "È importante distribuire il peso del carico uniformemente sulle forche?",
+                "risposta_corretta": true,
+                "risposta_utente": null
+            },
+            {
+                "domanda": "Un carico instabile può essere trasportato se il tragitto è breve?",
+                "risposta_corretta": false,
+                "risposta_utente": null
+            },
+            {
+                "domanda": "L’altezza di sollevamento del carico deve essere sempre la minima necessaria per lo spostamento?",
+                "risposta_corretta": true,
+                "risposta_utente": null
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "certificazione": "Abilitazione a carrelli elevatori - Gestione delle emergenze",
+        "data_di_scadenza": "2025-04-10",
+        "quesiti": [
+            {
+                "domanda": "In caso di ribaltamento del carrello, devi saltare fuori immediatamente?",
+                "risposta_corretta": false,
+                "risposta_utente": null
+            },
+            {
+                "domanda": "Se il carrello si ferma improvvisamente, è consigliato spegnere il motore e segnalare il guasto?",
+                "risposta_corretta": true,
+                "risposta_utente": null
+            },
+            {
+                "domanda": "Durante un incendio in magazzino, è sicuro utilizzare il carrello elevatore per trasportare persone all’esterno?",
+                "risposta_corretta": false,
+                "risposta_utente": null
+            }
+        ]
+    }
+]

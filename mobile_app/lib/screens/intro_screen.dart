@@ -2,15 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 import '../widgets/intro_widget.dart';
 import 'login_screen.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'home_screen.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-
-import 'package:flutter/material.dart';
-import 'package:liquid_swipe/liquid_swipe.dart';
-import 'login_screen.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart'; // Importa Google Fonts
 
 class IntroScreen extends StatefulWidget {
   @override
@@ -24,21 +18,21 @@ class _IntroScreenState extends State<IntroScreen> {
   final pages = [
     IntroPageWidget(
       backgroundColor: Colors.blue,
-      icon: Icons.flutter_dash,
-      title: 'Benvenuto in Flutter App!',
+      icon: Icons.explore,
+      title: 'Benvenuto in Quirrel!',
       description: 'Scopri le funzionalità della nostra app.',
     ),
     IntroPageWidget(
       backgroundColor: Colors.green,
-      icon: Icons.security,
-      title: 'Sicurezza',
-      description: 'Proteggi i tuoi dati con la nostra sicurezza avanzata.',
+      icon: Icons.school,
+      title: 'Formazione',
+      description: 'Potenzia il team con la nostra app di formazione!',
     ),
     IntroPageWidget(
       backgroundColor: Colors.orange,
-      icon: Icons.cloud,
-      title: 'Cloud Storage',
-      description: 'Accedi ai tuoi file ovunque e in qualsiasi momento.',
+      icon: Icons.lightbulb,
+      title: 'Innovazione formativa!',
+      description: 'Porta innovazione al tuo business con l''IA.',
     ),
     IntroPageWidget(
       backgroundColor: Colors.purple,
@@ -72,12 +66,16 @@ class _IntroScreenState extends State<IntroScreen> {
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
                 );
               },
               child: Text(
                 'Skip',
-                style: TextStyle(color: Colors.white, fontSize: 18.sp),
+                style: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           ),
@@ -111,15 +109,26 @@ class _IntroScreenState extends State<IntroScreen> {
                   onPressed: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()),
+                      MaterialPageRoute(builder: (context) => HomeScreen()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.blue, backgroundColor: Colors.white,
+                    foregroundColor: Colors.blue,
+                    backgroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 46.w, vertical: 12.h),
-                    textStyle: TextStyle(fontSize: 18.sp),
+                    textStyle: GoogleFonts.poppins(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                  child: Text('Avanti'),
+                  child: Text(
+                    'Avanti',
+                    style: GoogleFonts.poppins(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.blue,
+                    ),
+                  ),
                 ),
               ),
             ),

@@ -44,6 +44,7 @@ class MyApp extends StatelessWidget {
         splitScreenMode: true,
         builder: (context, child) {
           return MaterialApp(
+            debugShowCheckedModeBanner: false, // Rimuove la scritta "DEBUG"
             title: 'Flutter Demo',
             theme: ThemeData(
               primarySwatch: Colors.blue,

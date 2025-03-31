@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart'; // Importa Google Fonts
 
 class IntroPageWidget extends StatelessWidget {
   final Color backgroundColor;
@@ -28,7 +29,7 @@ class IntroPageWidget extends StatelessWidget {
             SizedBox(height: 20.h),
             Text(
               title,
-              style: TextStyle(
+              style: GoogleFonts.poppins(
                 fontSize: 24.sp,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -37,7 +38,7 @@ class IntroPageWidget extends StatelessWidget {
             SizedBox(height: 10.h),
             Text(
               description,
-              style: TextStyle(
+              style: GoogleFonts.poppins(
                 fontSize: 18.sp,
                 color: Colors.white,
               ),

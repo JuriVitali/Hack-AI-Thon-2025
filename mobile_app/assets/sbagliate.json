@@ -1,0 +1,19 @@
+
+[
+    {
+        "domanda": "Un carico instabile può essere trasportato se il tragitto è breve?",
+        "risposte": false
+    },
+    {
+        "domanda": "L’altezza di sollevamento del carico deve essere sempre la minima necessaria per lo spostamento?",
+        "risposte": true
+    },
+    {
+        "domanda": "È obbligatorio controllare il carrello elevatore prima dell’uso?",
+        "risposte": true
+    },
+    {
+        "domanda": "Devi sempre mantenere le forche abbassate quando guidi senza carico?",
+        "risposte": false
+    }
+]

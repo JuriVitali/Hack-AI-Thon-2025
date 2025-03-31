@@ -1,0 +1,19 @@
+
+[
+    {
+        "domanda": "La Terra \u00e8 piatta?",
+        "risposte": false
+    },
+    {
+        "domanda": "Il sole \u00e8 una stella?",
+        "risposte": true
+    },
+    {
+        "domanda": "L'acqua bolle a 100 gradi Celsius?",
+        "risposte": true
+    },
+    {
+        "domanda": "Gli esseri umani possono respirare sott'acqua senza attrezzatura?",
+        "risposte": false
+    }
+]
