@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.10-slim
 
 # Imposta cartella di lavoro
 WORKDIR /flask_app
@@ -7,10 +7,10 @@ WORKDIR /flask_app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY ./backend/ .
 
 # Espone la porta (5000 per Flask)
 EXPOSE 5000
 
 # Avvia il server Flask
-CMD CMD ["flask", "run", "--host=0.0.0.0"]
+CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"] 

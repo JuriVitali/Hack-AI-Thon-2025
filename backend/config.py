@@ -1,10 +1,13 @@
 from flask import Flask, flash, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from flask_migrate import Migrate
 import os
 
 app = Flask(__name__)
 CORS(app) # disabilita errore e rende possibili le richieste tra backend e frontend
+
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "123")
 
 # UPLOAD_FOLDER = 'backend/uploads' 
 UPLOAD_FOLDER = os.path.join(app.root_path, 'uploads')
@@ -18,8 +21,13 @@ def allowed_file(filename):  # ritorna vero se c'è il punto nel nome e se l'est
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER 
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///mydatabase.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://ai:ai@db:5432/ai"
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
+
+migrate = Migrate(app, db)
+
+
 

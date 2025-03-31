@@ -6,9 +6,53 @@
     <title>Home</title>
 </head>
 <body>
-    <h1>Caricamento file PDF</h1>
+    <h1>Add Files To Expand Knowledge</h1>
     <form method="post" enctype="multipart/form-data">
-        <input type="file" name="file">
+        <input type="file" name="files" multiple />
         <input type="submit" value="Upload" name="submit">
+    </form>
+
+    <h2>Knowledge Base</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Source</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for file in files %}
+            <tr>
+                <td>{{ file.id }}</td>
+                <td>{{ file.path.split('/')[-1] }}</td>
+                <td>
+                    <button onclick="deleteFile({{ file.id }})">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        </thead>
+    </table>
 </body>
+
+<script type="text/javascript">
+    function deleteFile(id) {
+        fetch('{{ url_for("delete_file", id = id) }}' + id, {
+
+            method: 'DELETE'
+        }).then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                console.error('Failed to delete file with id: ', id)
+            }
+        })
+            .catch(error => {
+                console.error('Error during fetching: ', error);
+            })
+    }
+
+</script>
+
 </html>
